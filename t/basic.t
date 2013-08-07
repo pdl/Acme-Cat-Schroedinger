@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Test::More;
 use Acme::Cat::Schroedinger;
+use Data::Dumper;
 
 sub kitty {
 	Acme::Cat::Schroedinger->new(@_);
@@ -15,7 +16,7 @@ ok (!ref (kitty.''), "Stringification works");
 ok (ref ($cat), 'Cat is an object');
 
 my $nvm = $cat.'dog';
-ok (!ref ($cat), "stringification modifies the cat");
+ok (!ref ($cat), "stringification modifies the cat") or diag Dumper [$cat];
 
 $cat = kitty;
 

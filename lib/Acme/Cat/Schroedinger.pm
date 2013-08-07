@@ -15,24 +15,40 @@ Acme::Cat::Schroedinger - objects whose behaviour is determined by attempts to i
 
 our $VERSION = 1;
 
-use overload (
-'0+'=> sub {return $_[0]=0;},
-'""'=> sub {return $_[0]='';}, # todo: include temperament
-'@{}'=> sub {return $_[0]=[];}, # todo: include temperament
-'%{}'=> sub {return $_[0]={};}, # todo: include temperament
-'${}'=> sub {return $_[0]=\0;}, # todo: include temperament
-'*{}'=> sub {return $_[0]=\*{''};}, # todo: include temperament
-'&{}'=> sub {return $_[0]=sub{ return Acme::Cat::Schroedinger->new; };}, # include kitten logic
-);
+our $dispatch_table = {
+	'0+'  => sub {return $_[0]=0;},
+	'""'  => sub {return $_[0]='';}, # todo: include temperament
+	'@{}' => sub {return $_[0]=[];}, # todo: include temperament
+	'%{}' => sub {return $_[0]={};}, # todo: include temperament
+	'${}' => sub {return $_[0]=\0;}, # todo: include temperament
+	'*{}' => sub {return $_[0]=\*{''};}, # todo: include temperament
+#	'&{}' => sub {return $_[0]=sub{ return Acme::Cat::Schroedinger->new; };}, # include kitten logic
+};
+
+our $dispatch_code = sub {
+	my ($type, @args) = @_;
+	if ($_[0]->('temperament') eq 'perverse') {
+		return $_[0] = ($type =~/0\+|\"\"|bool/ ? {} : '' );
+	}
+	$dispatch_table->{$type}->(@args) unless $args[0];
+};
+
+use overload %$dispatch_table;
 
 
 
 sub new{
 	my $class = shift;
-	my $self = {
-		'temperament'	=>	'cooperative', # cooperative | perverse | random
-		'kittens'	=>	'inherit', # inherit | default | random
-		'mutable'	=>	'1', # 0 | 1
+	my %options = @_;
+	my $self = sub {
+		my $attr = shift;
+		my %attrs = (
+			'temperament'	=>	'cooperative', # cooperative | perverse | random
+			'kittens'	=>	'inherit', # inherit | default | random
+			'mutable'	=>	'1', # 0 | 1 # never usable
+			%options
+		);
+		return $attrs{$attr}; # check caller
 	};
 	bless $self, $class;
 }
