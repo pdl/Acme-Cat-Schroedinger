@@ -16,7 +16,14 @@ Acme::Cat::Schroedinger - objects whose behaviour is determined by attempts to i
 our $VERSION = 1;
 
 use overload (
-'0+'  => sub {return $_[0]=0;},
+'0+'  => sub {return  $_[0]->('0+')->($_[0]);},
+'""'  => sub {return  $_[0]->('""')->($_[0]);},
+'@{}' => sub {return $_[0]->('@{}')->($_[0]);},
+'%{}' => sub {return $_[0]->('%{}')->($_[0]);},
+'${}' => sub {return $_[0]->('${}')->($_[0]);},
+'*{}' => sub {return $_[0]->('*{}')->($_[0]);}
+);
+my %xxx = ('0+'  => sub {return $_[0]=0;},
 '""'  => sub {return $_[0]='';}, # todo: include temperament
 '@{}' => sub {return $_[0]=[];}, # todo: include temperament
 '%{}' => sub {return $_[0]={};}, # todo: include temperament
@@ -40,7 +47,17 @@ sub new{
 			'mutable'	=>	'1', # 0 | 1 # never usable
 			%options
 		);
-		return $attrs{$attr}; # check caller
+		return $attrs{$attr} if exists $attrs{$attr}; # check caller
+		my $coopRef = $attrs{temperament} eq 'cooperative'?undef:'';
+		my %overload = (
+			'0+'  => sub {return ($_[0]= defined $coopRef?die:0);},
+			'""'  => sub {return ($_[0]= defined $coopRef?die:'');}, # todo: include temperament
+			'@{}' => sub {return ($_[0]=$coopRef // []);}, # todo: include temperament
+			'%{}' => sub {return ($_[0]=$coopRef // {});}, # todo: include temperament
+			'${}' => sub {return ($_[0]=$coopRef // \0);}, # todo: include temperament
+			'*{}' => sub {return ($_[0]=$coopRef // \*{''});}, # todo: include temperament
+		);
+		return $overload{$attr};
 	};
 	bless $self, $class;
 }

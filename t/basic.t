@@ -52,6 +52,28 @@ else {
 	ok (!keys %$nvm ,'empty hashref');
 }
 
+sub perverse_kitty {kitty(temperament=>'perverse',@_)}
+eval {
+	$nvm = perverse_kitty.''
+};
+if ($@) {
+	pass ('A properly perverse cat cannot be concatenated');
+}
+else {
+	fail('A properly perverse cat cannot be concatenated');
+	diag Dumper [$nvm];
+}
+eval {
+	$nvm = perverse_kitty->{temperament}
+};
+if ($@) {
+	pass ('A properly perverse cat cannot be dereferenced');
+}
+else {
+	fail('A properly perverse cat cannot be dereferenced');
+}
+
+
 # write more tests!
 
 done_testing;
