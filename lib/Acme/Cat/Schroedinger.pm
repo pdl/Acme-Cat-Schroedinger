@@ -15,25 +15,17 @@ Acme::Cat::Schroedinger - objects whose behaviour is determined by attempts to i
 
 our $VERSION = 1;
 
-our $dispatch_table = {
-	'0+'  => sub {return $_[0]=0;},
-	'""'  => sub {return $_[0]='';}, # todo: include temperament
-	'@{}' => sub {return $_[0]=[];}, # todo: include temperament
-	'%{}' => sub {return $_[0]={};}, # todo: include temperament
-	'${}' => sub {return $_[0]=\0;}, # todo: include temperament
-	'*{}' => sub {return $_[0]=\*{''};}, # todo: include temperament
+use overload (
+'0+'  => sub {return $_[0]=0;},
+'""'  => sub {return $_[0]='';}, # todo: include temperament
+'@{}' => sub {return $_[0]=[];}, # todo: include temperament
+'%{}' => sub {return $_[0]={};}, # todo: include temperament
+'${}' => sub {return $_[0]=\0;}, # todo: include temperament
+'*{}' => sub {return $_[0]=\*{''};}, # todo: include temperament
+)
 #	'&{}' => sub {return $_[0]=sub{ return Acme::Cat::Schroedinger->new; };}, # include kitten logic
-};
+;
 
-our $dispatch_code = sub {
-	my ($type, @args) = @_;
-	if ($_[0]->('temperament') eq 'perverse') {
-		return $_[0] = ($type =~/0\+|\"\"|bool/ ? {} : '' );
-	}
-	$dispatch_table->{$type}->(@args) unless $args[0];
-};
-
-use overload %$dispatch_table;
 
 
 
