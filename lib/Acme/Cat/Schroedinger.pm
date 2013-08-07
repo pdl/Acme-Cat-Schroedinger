@@ -48,7 +48,7 @@ sub new{
 			%options
 		);
 		return $attrs{$attr} if exists $attrs{$attr}; # check caller
-		my $coopRef = $attrs{temperament} eq 'cooperative'?undef:'';
+		my $coopRef = ($attrs{temperament} eq 'cooperative' or ($attrs{temperament} eq 'random' and int(rand(2)) ) )? undef:'';
 		my %overload = (
 			'0+'  => sub {return ($_[0]= defined $coopRef?die:0);},
 			'""'  => sub {return ($_[0]= defined $coopRef?die:'');}, # todo: include temperament
@@ -70,11 +70,11 @@ A newly-created Acme::Cat::Schroedinger could be anything. It could be cooperati
 	print %{$cat}; # The cat is now an empty hashref, and does not die.
 	
 	# or...
-	my $cat = Acme::Cat::Schroedinger->new('perverse');
+	my $cat = Acme::Cat::Schroedinger->new(temperament=>'perverse');
 	print %{$cat}; # The cat is guaranteed not to be a hashref (or anything else you expect it to be), and thus will die.
 
 	# or...
-	my $cat = Acme::Cat::Schroedinger->new('random');
+	my $cat = Acme::Cat::Schroedinger->new(temperament=>'random');
 	print %{$cat}; # May or may not die, the only way of knowing is running the code.
 
 =head1 DESCRIPTION
@@ -92,14 +92,6 @@ When you create the cat, it has the following properties:
 =head3 temperament = cooperative
 
 Allowed: C<cooperative|perverse|random>. Determines whether the cat always behaves the way you ask it to, never behaves the way you ask it to, or decides how to behave only when you ask it. 
-
-=head3 mutable = 1
-
-Allowed: C<0|1>. If mutable, the cat will change when you interact with it (if you try to stringify a cooperative cat, it will become a string). If not, the cat will remain a cat, i.e. you could stringify a cooperative cat, and then successfully execute it as a coderef; it would still be a cat. 
-
-=head3 kittens = inherit
-
-Allowed: C<inherit|default|random>. This determines whether the cat's kittens are identical to the parent, use the default values, or behave in some unknown way.
 
 =head1 BUGS
 
