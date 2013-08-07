@@ -23,17 +23,6 @@ use overload (
 '${}' => sub {return $_[0]->('${}')->($_[0]);},
 '*{}' => sub {return $_[0]->('*{}')->($_[0]);}
 );
-my %xxx = ('0+'  => sub {return $_[0]=0;},
-'""'  => sub {return $_[0]='';}, # todo: include temperament
-'@{}' => sub {return $_[0]=[];}, # todo: include temperament
-'%{}' => sub {return $_[0]={};}, # todo: include temperament
-'${}' => sub {return $_[0]=\0;}, # todo: include temperament
-'*{}' => sub {return $_[0]=\*{''};}, # todo: include temperament
-)
-#	'&{}' => sub {return $_[0]=sub{ return Acme::Cat::Schroedinger->new; };}, # include kitten logic
-;
-
-
 
 
 sub new{
