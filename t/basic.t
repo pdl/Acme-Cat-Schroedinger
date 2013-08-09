@@ -42,6 +42,18 @@ else {
 }
 
 eval {
+	$nvm = &kitty->();
+};
+if ($@) {
+	fail ($@);
+}
+else {
+	pass('Can call as code ref');
+	is($nvm->(), 'meow', 'Can meow as code ref');
+}
+
+
+eval {
 	$nvm = {%{&kitty}};
 };
 if ($@) {

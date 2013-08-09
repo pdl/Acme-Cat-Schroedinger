@@ -21,7 +21,7 @@ use overload (
 '@{}' => sub {return $_[0]->('@{}')->($_[0]);},
 '%{}' => sub {return $_[0]->('%{}')->($_[0]);},
 '${}' => sub {return $_[0]->('${}')->($_[0]);},
-'*{}' => sub {return $_[0]->('*{}')->($_[0]);}
+'*{}' => sub {return $_[0]->('*{}')->($_[0]);},
 );
 
 
@@ -30,6 +30,8 @@ sub new{
 	my %options = @_;
 	my $self = sub {
 		my $attr = shift;
+		my @caller = caller;
+		return sub {'meow'} unless $caller[0] eq __PACKAGE__;
 		my %attrs = (
 			'temperament'	=>	'cooperative', # cooperative | perverse | random
 			'kittens'	=>	'inherit', # inherit | default | random
